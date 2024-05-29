@@ -2,8 +2,8 @@ import { faker } from '@faker-js/faker'
 
 const jobStatuses = [
   { value: "Completed", id: 1 },
-  { value: "In Progress", id: 2 },
-  { value: "On Hold", id: 3 }
+  { value: "On Hold", id: 2 },
+  { value: "In Progress", id: 3 }
 ];
 const jobCategories = [
   { value: "Sidewalk Shed", id: 1 },
@@ -16,8 +16,8 @@ function generateJob(numJobs = 1) {
 
   for (let i = 0; i < numJobs; i += 1) {
     const nameJob = faker.random.words();
-    const status = faker.helpers.arrayElement(jobStatuses).value;  // use arrayElement instead of objectEntry
-    const category = faker.helpers.arrayElement(jobCategories).value;  // use arrayElement instead of objectEntry
+    const status = faker.helpers.arrayElement(jobStatuses).value;  
+    const category = faker.helpers.arrayElement(jobCategories).value;  
 
     newJobs.push({
       nameJob,

@@ -22,10 +22,12 @@ code {
 }
 .p-tag-success {
   background: #7ac14d;
-
 }
 .p-tag-warning {
   background: #fe4c4a;
+}
+.p-tag-progress {
+  background: #B3D99B;
 }
 
 .p-datatable-header{
