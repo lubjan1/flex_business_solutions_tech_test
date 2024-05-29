@@ -11,3 +11,27 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.p-tag-error {
+  background-color: #ecde7c;
+}
+.p-tag-success {
+  background: #7ac14d;
+
+}
+.p-tag-warning {
+  background: #fe4c4a;
+}
+
+.p-datatable-header{
+  background-color: white !important;
+  border-bottom: solid 1px #e0e0e0;
+}
+.p-column-title{
+  font-weight: normal !important;
+}
