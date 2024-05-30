@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 
 const jobStatuses = [
-  { name: "Completed", code: 1 },
-  { name: "On Hold", code: 2 },
-  { name: "In Progress", code: 3 }
+  { name: "Completed", id: 1,code:"completed" },
+  { name: "On Hold", id: 2,code:"on_hold" },
+  { name: "In Progress", id: 3,code:"in_progress" }
 ];
 
 const jobCategories = [
@@ -11,6 +11,12 @@ const jobCategories = [
   { name: "Scaffold", code: '2' },
   { name: "Shoring", code: '3' }
 ];
+
+let idCounter = 0;
+
+const generateUniqueId = () => {
+  return idCounter++;
+}
 
 function generateJob(numJobs = 1) {
   const newJobs = [];
@@ -24,6 +30,7 @@ function generateJob(numJobs = 1) {
       nameJob,
       status,
       category,
+      id: generateUniqueId()
     });
   }
   return newJobs;
