@@ -30,8 +30,18 @@ code {
   background: #B3D99B;
 }
 
+.complete-statistics{
+  background: #79c14d60;
+}
+.on-hold-statistics {
+  background: #fe4d4a67;
+}
+.in-progress-statistics{
+  background: #b3d99b54;
+}
+
 .p-datatable-header{
-  background-color: white !important;
+  background-color: #f8f8f8 !important;
   border-bottom: solid 1px #e0e0e0;
 }
 .p-column-title{

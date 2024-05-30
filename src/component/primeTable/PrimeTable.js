@@ -9,7 +9,10 @@ import { Column } from 'primereact/column';
     scrollHeight,
     header,
     globalFilter,
-    globalFilterFields
+    globalFilterFields,
+    selection,
+    onSelectionChange,
+    onChange
 }) => {
 
     const columnsToShow = () => {
@@ -29,17 +32,21 @@ import { Column } from 'primereact/column';
         <div className="card">
             <DataTable
                 value={value}
-                // tableStyle={{ minWidth: '50rem', }}
+                tableStyle={{ minWidth: '50rem', }}
                 size="sm"
                 scrollHeight={scrollHeight}
                 sortMode="single"
-                stripedRows 
+                stripedRows
                 scrollable 
                 removableSort 
                 header={header}
                 globalFilter={globalFilter}
                 globalFilterFields={globalFilterFields}
                 className="white-header"
+                selectionMode="single" 
+                selection={selection}
+                onSelectionChange={onSelectionChange}
+                onChange={onChange}
             >
                 {columnsToShow()}
             </DataTable>
