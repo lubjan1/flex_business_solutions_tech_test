@@ -7,14 +7,15 @@ import { jobCategories, jobStatuses } from "../../store/generateJob";
 import { Toast } from 'primereact/toast';
 import EditJobs from "../modals/EditJobs";
 import mainColumns from "../columns/mainColumns";
+import { useNavigate } from "react-router-dom"
 
 const Home = () => {
-    // Fetch initial jobs from the store
-    const { jobs,setJobs } = useJobsStore((state) => ({
+    const { jobs, setJobs } = useJobsStore((state) => ({
         jobs: state.jobs,
-        setJobs:state.setJobs
+        setJobs: state.setJobs
     }));
-    console.log({jobs})
+    const navigate = useNavigate()
+    console.log({ jobs });
     // Component state variables
     const [selectedRow, setSelectedRow] = useState(null);
     const toast = useRef(null);
@@ -114,10 +115,10 @@ const Home = () => {
             <Dialog
                 header="Edit the job"
                 visible={visible.editJobVisible}
-                style={{ width: '50vw',}}
-                onHide={() => { 
+                style={{ width: '50vw', }}
+                onHide={() => {
                     setVisible({ editJobVisible: false });
-                    setSelectedRow(null); 
+                    setSelectedRow(null);
                 }}
             >
                 {visible.editJobVisible && selectedRow && <EditJobs
@@ -142,7 +143,7 @@ const Home = () => {
                     selection={selectedRow}
                     onSelectionChange={(e) => {
                         setSelectedRow(e.value);
-                        setVisible({ editJobVisible: true });
+                        navigate(`/inventory/${e.value.id}`, { state: { selectedRow: e.value } });
                     }}
                     selectionMode={'single'}
                     editMode={false}

@@ -1,104 +1,75 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 import PrimeTable from '../primeTable/PrimeTable';
-import { Dialog } from 'primereact/dialog';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { Dropdown } from 'primereact/dropdown';
-import { jobCategories, jobStatuses } from '../../store/generateJob';
+import { useJobsStore } from '../../store/useJobsStore';
+import inventoryColumns from '../columns/inventoryColumns';
 
-const InventoryDashboard = ({ match, inventoryItems, setInventoryItems }) => {
-  const jobId = match.params.id; 
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [formData, setFormData] = useState({});
+const InventoryDashboard = () => {
+  const { id } = useParams();
+  const { jobs, setJobs } = useJobsStore(state => ({
+    jobs: state.jobs,
+    setJobs: state.setJobs
+  }));
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const location = useLocation();
+  const selectedRow = location.state.selectedRow;
   
-  useEffect(() => {
-    // Fetch inventory items for this job site
-    // setInventoryItems(fetchedData);
-  }, [jobId]);
+  const [selectedItems, setSelectedItems] = useState(selectedRow?.items || []);
+  const [selectedRowItem, setSelectedRowItem] = useState(null);
 
-  const handleCellDoubleClick = (item) => {
-    setSelectedItem(item);
-    setFormData(item);
-    setIsModalVisible(true);
+  const onGlobalFilterChange = (e) => {
+    setGlobalFilterValue(e.target.value);
   };
 
-  const handleSave = () => {
-    const updatedItems = inventoryItems.map(item =>
-      item.id === selectedItem.id ? formData : item
-    );
-    setInventoryItems(updatedItems);
-    setIsModalVisible(false);
-  };
+  const columns = inventoryColumns();
 
-  const handleChange = (field, value) => {
-    setFormData({
-      ...formData,
-      [field]: value
-    });
-  };
-
-  const renderEditor = (options) => {
-    if (options.field === 'status') {
-      return (
-        <Dropdown
-          value={options.value}
-          options={jobStatuses}
-          onChange={(e) => handleChange(options.field, e.value)}
-          placeholder="Select a Status"
-        />
-      );
-    }
+  const renderHeader = () => {
     return (
-      <InputText
-        value={options.value}
-        onChange={(e) => handleChange(options.field, e.target.value)}
-      />
+      <div className="flex justify-end items-center ">
+        <div className="relative w-full max-w-md">
+          <input
+            className="w-full border border-gray-300 rounded-md p-1 pl-10 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Search"
+          />
+          <i className="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+      </div>
     );
   };
+
+  const header = renderHeader();
 
   return (
-    <div>
-      <h1>Inventory Dashboard for Job Site {jobId}</h1>
-      <PrimeTable
-        value={inventoryItems}
-        onCellDoubleClick={(e) => handleCellDoubleClick(e.value)}
-        editMode="cell"
-        cellEditValidator={renderEditor}
-      />
-      <Dialog
-        header="Edit Inventory Item"
-        visible={isModalVisible}
-        onHide={() => setIsModalVisible(false)}
-      >
-        <div className="field">
-          <label htmlFor="name">Name</label>
-          <InputText
-            id="name"
-            value={formData.name}
-            onChange={(e) => handleChange('name', e.target.value)}
-          />
+    <div className="flex p-4 bg-gray-50 text-gray-900">
+      {/* Sidebar */}
+      <div className='w-[20%] bg-white rounded-md shadow-md border p-4'>
+        <div className='bg-[#f8f8f8] border p-2 text-center font-medium text-gray-700 rounded-md'>
+          {selectedRow?.nameJob}
         </div>
-        <div className="field">
-          <label htmlFor="category">Category</label>
-          <Dropdown
-            id="category"
-            value={formData.category}
-            options={jobCategories}
-            onChange={(e) => handleChange('category', e.value)}
-          />
+        <div className='mt-4 text-center text-gray-700'>
+          <span className='font-semibold'>Category:</span> {selectedRow?.category?.name}
         </div>
-        <div className="field">
-          <label htmlFor="status">Status</label>
-          <Dropdown
-            id="status"
-            value={formData.status}
-            options={jobStatuses}
-            onChange={(e) => handleChange('status', e.value)}
-          />
-        </div>
-        <Button label="Save" onClick={handleSave} />
-      </Dialog>
+      </div>
+
+      {/* Jobs Table */}
+      <div className="rounded-md shadow-md border border-gray-200 w-full ml-4">
+        <PrimeTable
+          value={selectedItems}
+          columns={columns}
+          scrollHeight="400px"
+          header={header}
+          globalFilter={globalFilterValue}
+          globalFilterFields={["itemName", "status.name"]}
+          selection={selectedRowItem}
+          onSelectionChange={(e) => {
+            setSelectedRowItem(e.value);
+          }}
+          selectionMode={'single'}
+          editMode={false}
+        />
+      </div>
     </div>
   );
 };
