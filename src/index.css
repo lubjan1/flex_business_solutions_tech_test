@@ -47,3 +47,7 @@ code {
 .p-column-title{
   font-weight: normal !important;
 }
+
+.p-editable-column {
+  height: 80px;
+}

@@ -1,12 +1,16 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./component/home/Home";
+import InventoryDashboard from "./component/home/InventoryDashboard";
 
 function App() {
 
   return (
-    <div>
-      <Home />
-    </div>
+    <BrowserRouter>
+    <Routes>
+       <Route path="/" element={<Home />} />
+       <Route path="/inventory/:id" element={<InventoryDashboard />} />
+    </Routes>
+  </BrowserRouter>
   );
 };
 

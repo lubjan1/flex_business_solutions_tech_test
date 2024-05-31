@@ -1,114 +1,147 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PrimeTable from "../primeTable/PrimeTable";
-import { useJobsStore } from "../../store/useJobsStore";
 import { InputText } from "primereact/inputtext";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
 import editJobColumns from '../columns/editJobColumns';
 import { jobCategories, jobStatuses } from "../../store/generateJob";
+import { Tag } from "primereact/tag";
 
-const EditJobs = ({ selectedRow }) => {
-  const { jobs, setJobs } = useJobsStore((state) => ({
-    jobs: state.jobs,
-    setJobs: state.setJobs
-  }));
-  console.log({jobs});
-  const [formData, setFormData] = useState(selectedRow);
-  const [globalFilterValue, setGlobalFilterValue] = useState("");
+const EditJobs = ({ selectedRow, jobs, toast, setJobs, setVisible, setSelectedRow }) => {
 
-  const handleChange = (field, value) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [field]: value
-    }));
-  };
+    const [formData, setFormData] = useState(selectedRow);
+    const [globalFilterValue, setGlobalFilterValue] = useState("");
 
-  const onGlobalFilterChange = (e) => {
-    setGlobalFilterValue(e.target.value);
-  };
+    useEffect(() => {
+        setFormData(selectedRow);
+    }, [selectedRow]);
 
-  const textEditor = (options) => {
+    const handleChange = (field, value) => {
+        const updatedFormData = {
+            ...formData,
+            [field]: value
+        };
+        setFormData(updatedFormData);
+    };
+
+    const onGlobalFilterChange = (e) => {
+        setGlobalFilterValue(e.target.value);
+    };
+
+    const textEditor = (options) => {
+        return (
+            <input
+                className="border w-full border-slate-400 rounded-md outline-none font-normal py-1"
+                type="text"
+                value={options.value}
+                onChange={(e) => {
+                    handleChange(options.field, e.target.value);
+                    options.editorCallback(e.target.value);
+                }}
+            />
+        );
+    };
+
+    const dropdownEditor = (options, values, optionLabel) => {
+        return (
+            <Dropdown
+                value={options.value}
+                options={values}
+                optionLabel={optionLabel}
+                onChange={(e) => {
+                    handleChange(options.field, e.value);
+                    options.editorCallback(e.value);
+                }}
+                placeholder={`Select a ${optionLabel}`}
+                itemTemplate={(option) => (
+                    <div>
+                        {option[optionLabel]}
+                    </div>
+                )}
+            />
+        );
+    };
+
+    //   ${option[optionLabel] === "Completed" ? "p-tag p-tag-success" : ""} 
+    //   ${option[optionLabel] === "On Hold" ? "p-tag p-tag-warning" : ""}
+    //   ${option[optionLabel] === "In Progress" ? "p-tag p-tag-progress" : ""}
+    //   `}>
+
+    const statusEditor = (options) => {
+        return dropdownEditor(options, jobStatuses, 'name');
+    };
+
+    const categoryEditor = (options) => {
+        return dropdownEditor(options, jobCategories, 'name');
+    };
+
+    const columns = editJobColumns({
+        textEditor,
+        dropdownEditor,
+        statusEditor,
+        categoryEditor
+    });
+
+
+    const handleCancel = () => {
+        setVisible({ editJobVisible: false })
+        setSelectedRow(null)
+    };
+
+    const handleSave = () => {
+        const updatedJobs = jobs.map(job =>
+            job.id === selectedRow.id ? formData : job
+        );
+        setJobs(updatedJobs);
+        if (formData !== selectedRow) {
+            toast.current.show({
+                severity: 'success',
+                summary: 'Job Edited',
+                detail: 'The job has been successfully updated.',
+                life: 3000
+            });
+            setVisible({ editJobVisible: false });
+        } else {
+            toast.current.show({
+                severity: 'info',
+                summary: 'No Changes',
+                detail: 'No changes were made to the job.',
+                life: 3000
+            });
+        }
+    };
+
+
     return (
-      <input
-        className="border  border-slate-400 rounded-md outline-none font-normal "
-        type="text"
-        value={options.value}
-        onChange={(e) => {
-          handleChange(options.field, e.target.value);
-          options.editorCallback(e.target.value);
-        }}
-      />
-    );
-  };
+        <div>
+            <div className="w-[100%]">
+                <PrimeTable
+                    value={[formData]}
+                    columns={columns}
+                    scrollHeight="400px"
+                    globalFilter={globalFilterValue}
+                    globalFilterFields={["nameJob", "status.name", "category.name"]}
+                    editMode="cell"
+                    selectionMode="single"
+                />
+                <div className="flex justify-end gap-3 my-8">
+                    <button
+                        className="border rounded-md px-4 py-2 bg-red-700 text-white hover:bg-red-800 transition-all flex items-center gap-2 font-normal"
+                        onClick={handleCancel}
+                    >
+                        Cancel Changes <i className="pi pi-times"></i>
+                    </button>
+                    <button
+                        className="border rounded-md px-4 py-2 bg-green-500 text-white hover:bg-green-600 transition-all flex items-center gap-2 font-normal"
+                        onClick={handleSave}
+                    >
+                        Save Changes <i className="pi pi-check"></i>
+                    </button>
+                </div>
+            </div>
 
-  const dropdownEditor = (options, values) => {
-    return (
-      <Dropdown
-        value={options.value}
-        options={values}
-        optionLabel="name"
-        onChange={(e) => {
-           handleChange(options.field, e.value);
-          options.editorCallback(e.value);
-        }}
-      />
-    );
-  };
-
-  const columns = editJobColumns({
-    textEditor,
-    dropdownEditor
-  });
-
-  const renderHeader = () => {
-    return (
-      <div className="flex justify-between items-center mb-1">
-        <div className="relative w-full max-w-md">
-          <input
-            className="border border-gray-300 rounded-md p-0.5 pl-10 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Search"
-          />
-          <i className="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
         </div>
-      </div>
     );
-  };
-
-  const header = renderHeader();
-
-  return (
-    <PrimeTable
-      value={[formData]}
-      columns={columns}
-      scrollHeight="400px"
-      header={header}
-      globalFilter={globalFilterValue}
-      globalFilterFields={["nameJob", "status.name", "category.name"]}
-      editMode="cell"
-      selectionMode="single"
-    >
-      {columns.map((col, i) => (
-        <Column
-          key={i}
-          field={col.field}
-          header={col.header}
-          editor={col.editor}
-          style={col.style}
-          body={(rowData) => {
-            if (col.field === 'status.name') {
-              return rowData.status.name;
-            }
-            if (col.field === 'category.name') {
-              return rowData.category.name;
-            }
-            return rowData[col.field];
-          }}
-        />
-      ))}
-    </PrimeTable>
-  );
 };
 
 export default EditJobs;

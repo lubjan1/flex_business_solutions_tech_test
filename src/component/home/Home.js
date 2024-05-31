@@ -10,11 +10,12 @@ import mainColumns from "../columns/mainColumns";
 
 const Home = () => {
     // Fetch initial jobs from the store
-    const { jobs: initialJobs } = useJobsStore((state) => ({
-        jobs: state.jobs
+    const { jobs,setJobs } = useJobsStore((state) => ({
+        jobs: state.jobs,
+        setJobs:state.setJobs
     }));
+    console.log({jobs})
     // Component state variables
-    const [jobs, setJobs] = useState(initialJobs);
     const [selectedRow, setSelectedRow] = useState(null);
     const toast = useRef(null);
 
@@ -113,7 +114,7 @@ const Home = () => {
             <Dialog
                 header="Edit the job"
                 visible={visible.editJobVisible}
-                style={{ width: '60vw', height: "40vw", backgroundColor: '#ffffff' }}
+                style={{ width: '50vw',}}
                 onHide={() => { 
                     setVisible({ editJobVisible: false });
                     setSelectedRow(null); 
@@ -122,6 +123,9 @@ const Home = () => {
                 {visible.editJobVisible && selectedRow && <EditJobs
                     selectedRow={selectedRow}
                     setVisible={setVisible}
+                    setSelectedRow={setSelectedRow}
+                    setJobs={setJobs}
+                    jobs={jobs}
                     toast={toast}
                 />}
             </Dialog>

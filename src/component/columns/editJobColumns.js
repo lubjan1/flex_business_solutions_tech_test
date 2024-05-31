@@ -1,31 +1,32 @@
-import { Dropdown } from "primereact/dropdown";
-import { jobCategories, jobStatuses } from "../../store/generateJob";
 
 const editJobColumns = ({
   textEditor,
-  dropdownEditor,
+  statusEditor,
+  categoryEditor
 }) => {
   return [
     {
-        field: "nameJob",
-        header: "Jobsite Name",
-        editor: (options) => textEditor(options),
-        style:{ width:"150px" }
+      field: 'nameJob',
+      header: 'Job Name',
+      editor: textEditor,
+      style:{ width:"200px" }
+
     },
     {
-        field: "status.name",
-        header: "Status",
-        editor: (options) => dropdownEditor(options, jobStatuses),
-        body: (rowData) => rowData.category.name,
-        style:{ width:"150px" }
+      field: 'status',
+      header: 'Status',
+      editor: statusEditor,
+      body: (rowData) => rowData.status.name,
+      style:{ width:"200px" }
+
     },
     {
-        field: "category.name",
-        header: "Category",
-        editor: (options) => dropdownEditor(options, jobCategories),
-        body: (rowData) => rowData.category.name,
-        style:{ width:"150px" }
-    },
+      field: 'category',
+      header: 'Category',
+      editor: categoryEditor,
+      body: (rowData) => rowData.category.name,
+      style:{ width:"200px" }
+    } 
   ];
 };
 

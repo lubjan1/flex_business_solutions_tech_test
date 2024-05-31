@@ -12,21 +12,12 @@ const PrimeTable = ({
     selection,
     onSelectionChange,
     selectionMode,
-    editMode
+    editMode,
+    sortable=true,
+    children,
+    ...props
 }) => {
-    const columnsToShow = () => {
-        return columns.map((column, index) => (
-            <Column
-                key={index}
-                field={column.field}
-                header={column.header}
-                body={column.body}
-                editor={column.editor}
-                sortable
-                showAddButton
-            />
-        ));
-    };
+
 
     return (
         <div className="card">
@@ -47,8 +38,12 @@ const PrimeTable = ({
                 selection={selection}
                 onSelectionChange={onSelectionChange}
                 editMode={editMode}
+                {...props}
             >
-                {columnsToShow()}
+                 {children}
+                {columns.map((column) => (
+                    <Column  key={column.field} {...column} />
+                ))}
             </DataTable>
         </div>
     );
