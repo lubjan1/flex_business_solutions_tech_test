@@ -12,10 +12,9 @@ import { useNavigate } from "react-router-dom"
 const Home = () => {
     const { jobs, setJobs } = useJobsStore((state) => ({
         jobs: state.jobs,
-        setJobs: state.setJobs
+        setJobs: state.set
     }));
     const navigate = useNavigate()
-    console.log({ jobs });
     // Component state variables
     const [selectedRow, setSelectedRow] = useState(null);
     const toast = useRef(null);
@@ -23,7 +22,7 @@ const Home = () => {
     const [visible, setVisible] = useState({
         createNewJobVisible: false,
     });
-
+    console.log({ jobs })
     const [globalFilterValue, setGlobalFilterValue] = useState("");
 
     // Calculate status counts for different job statuses
@@ -41,7 +40,7 @@ const Home = () => {
 
     // Add new jobs to the state
     const addJobs = (newJob) => {
-        setJobs([...jobs, newJob]);
+        setJobs({jobs:[newJob,...jobs]});
     };
 
     // table header with search and create button
@@ -120,8 +119,8 @@ const Home = () => {
                     globalFilterFields={["nameJob", "status.name"]}
                     selection={selectedRow}
                     onSelectionChange={(e) => {
-                        setJobs(e.value);
-                        navigate('/inventory');
+                        // setSelectedRow(e.value)
+                        navigate('/inventory', { state: e.value } );
                     }}
                     selectionMode={'single'}
                     editMode={false}

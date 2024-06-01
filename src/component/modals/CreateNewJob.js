@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Dropdown } from 'primereact/dropdown';
-
+import { generateItems } from "../../store/generateJob";
 const CreateNewJob = ({ jobCategories, jobStatuses, addJobs, setVisible, toast }) => {
     const [formData, setFormData] = useState({
         nameJob: '',
@@ -28,7 +28,7 @@ const CreateNewJob = ({ jobCategories, jobStatuses, addJobs, setVisible, toast }
             });
             return;
         }
-        addJobs(formData);
+        addJobs({...formData,items:generateItems()});
         setVisible({ createNewJobVisible: false });
         toast.current.show({
             severity: 'success',

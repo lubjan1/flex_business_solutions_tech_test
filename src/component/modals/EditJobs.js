@@ -17,7 +17,6 @@ const EditJobs = ({
 
   const handleSave = () => {
     updateItems(formData);
-    setVisible(false);
   };
 
   const handleChange = (e, field) => {

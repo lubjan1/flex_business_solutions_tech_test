@@ -17,7 +17,7 @@ let idCounter = 0;
 const generateUniqueId = () => {
   return idCounter++;
 }
-const generateItems = (numItems = 5) => {
+export const generateItems = (numItems = 5) => {
   const items = [];
 
   for (let i = 0; i < numItems; i += 1) {
@@ -46,7 +46,7 @@ function generateJob(numJobs = 1) {
     const nameJob = faker.random.words();
     const status = faker.helpers.arrayElement(jobStatuses);
     const category = faker.helpers.arrayElement(jobCategories);
-    const items = generateItems(faker.datatype.number({ min: 1, max: 10 }));
+     const items = generateItems(faker.datatype.number({ min: 1, max: 10 }));
 
     newJobs.push({
       nameJob,
