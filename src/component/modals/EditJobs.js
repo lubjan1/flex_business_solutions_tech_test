@@ -3,137 +3,80 @@ import PrimeTable from "../primeTable/PrimeTable";
 import { Dropdown } from "primereact/dropdown";
 import editJobColumns from '../columns/editJobColumns';
 import { jobCategories, jobStatuses } from "../../store/generateJob";
+import { useJobsStore } from "../../store/useJobsStore";
 
-const EditJobs = ({ selectedRow, jobs, toast, setJobs, setVisible, setSelectedRow }) => {
-
-  const [formData, setFormData] = useState(selectedRow);
-  const [globalFilterValue, setGlobalFilterValue] = useState("");
-
-  useEffect(() => {
-    setFormData(selectedRow);
-  }, [selectedRow]);
-
-  const handleChange = (field, value) => {
-    const updatedFormData = {
-      ...formData,
-      [field]: value
-    };
-    setFormData(updatedFormData);
-  };
-
-  const textEditor = (options) => {
-    return (
-      <input
-        className="border w-full border-slate-400 rounded-md outline-none font-normal py-1"
-        type="text"
-        value={options.value}
-        onChange={(e) => {
-          handleChange(options.field, e.target.value);
-          options.editorCallback(e.target.value);
-        }}
-      />
-    );
-  };
-
-  const dropdownEditor = (options, values, optionLabel) => {
-    return (
-      <Dropdown
-        value={options.value}
-        options={values}
-        optionLabel={optionLabel}
-        onChange={(e) => {
-          handleChange(options.field, e.value);
-          options.editorCallback(e.value);
-        }}
-        placeholder={`Select a ${optionLabel}`}
-        itemTemplate={(option) => (
-          <div>
-            {option[optionLabel]}
-          </div>
-        )}
-      />
-    );
-  };
-
-  //   ${option[optionLabel] === "Completed" ? "p-tag p-tag-success" : ""} 
-  //   ${option[optionLabel] === "On Hold" ? "p-tag p-tag-warning" : ""}
-  //   ${option[optionLabel] === "In Progress" ? "p-tag p-tag-progress" : ""}
-  //   `}>
-
-  const statusEditor = (options) => {
-    return dropdownEditor(options, jobStatuses, 'name');
-  };
-
-  const categoryEditor = (options) => {
-    return dropdownEditor(options, jobCategories, 'name');
-  };
-
-  const columns = editJobColumns({
-    textEditor,
-    dropdownEditor,
-    statusEditor,
-    categoryEditor
-  });
-
-
-  const handleCancel = () => {
-    setVisible({ editJobVisible: false })
-    setSelectedRow(null)
-  };
+const EditJobs = ({
+  selectedRowItem,
+  setSelectedRowItem,
+  setVisible,
+  visible,
+  toast,
+  updateItems
+}) => {
+  const [formData, setFormData] = useState(selectedRowItem);
 
   const handleSave = () => {
-    const updatedJobs = jobs.map(job =>
-      job.id === selectedRow.id ? formData : job
-    );
-    setJobs(updatedJobs);
-    if (formData !== selectedRow) {
-      toast.current.show({
-        severity: 'success',
-        summary: 'Job Edited',
-        detail: 'The job has been successfully updated.',
-        life: 3000
-      });
-      setVisible({ editJobVisible: false });
-    } else {
-      toast.current.show({
-        severity: 'info',
-        summary: 'No Changes',
-        detail: 'No changes were made to the job.',
-        life: 3000
-      });
-    }
+    updateItems(formData);
+    setVisible(false);
+  };
+
+  const handleChange = (e, field) => {
+    setFormData({ ...formData, [field]: e.target.value });
   };
 
 
   return (
-    <div>
-      <div className="w-[100%]">
-        <PrimeTable
-          value={[formData]}
-          columns={columns}
-          scrollHeight="400px"
-          globalFilter={globalFilterValue}
-          globalFilterFields={["nameJob", "status.name", "category.name"]}
-          editMode="cell"
-          selectionMode="single"
-        />
-        <div className="flex justify-end gap-3 my-8">
-          <button
-            className="border rounded-md px-4 py-2 bg-red-700 text-white hover:bg-red-800 transition-all flex items-center gap-2 font-normal"
-            onClick={handleCancel}
-          >
-            Cancel Changes <i className="pi pi-times"></i>
-          </button>
-          <button
-            className="border rounded-md px-4 py-2 bg-green-500 text-white hover:bg-green-600 transition-all flex items-center gap-2 font-normal"
-            onClick={handleSave}
-          >
-            Save Changes <i className="pi pi-check"></i>
-          </button>
+    <div className="p-3 border-t space-y-6 bg-white rounded-lg">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="flex flex-col">
+          <label htmlFor="itemName" className="mb-2 font-semibold text-gray-700">Item Name</label>
+          <input
+            id="itemName"
+            value={formData?.itemName}
+            onChange={(e) => handleChange(e,'itemName')}
+            className="p-2 border outline-none border-gray-300 rounded-md focus:ring-1 focus:ring-blue-200 transition-all"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="quantity" className="mb-2 font-semibold text-gray-700">Quantity</label>
+          <input
+            type="number"
+            id="quantity"
+            value={formData?.quantity}
+            onChange={(e) => handleChange(e,'quantity')}
+            className="p-2 border outline-none border-gray-300 rounded-md focus:ring-1 focus:ring-blue-200 transition-all"
+          />
         </div>
       </div>
-
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="flex flex-col">
+          <label htmlFor="description" className="mb-2 font-semibold text-gray-700">Description</label>
+          <textarea
+            id="description"
+            rows={1}
+            value={formData?.description}
+            onChange={(e) => handleChange(e,'description', )}
+            className="p-2 border outline-none border-gray-300 rounded-md focus:ring-1 focus:ring-blue-200 transition-all"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="notes" className="mb-2 font-semibold text-gray-700">Notes</label>
+          <textarea
+            id="notes"
+            rows={1}
+            value={formData?.notes}
+            onChange={(e) => handleChange(e,'notes')}
+            className="p-2 border outline-none border-gray-300 rounded-md focus:ring-1 focus:ring-blue-200 transition-all"
+          />
+        </div>
+      </div>
+      <div className="flex justify-end">
+        <button className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200 ease-in-out" onClick={handleSave}>
+          Save
+        </button>
+      </div>
     </div>
+
   );
 };
 

@@ -22,17 +22,15 @@ const Home = () => {
 
     const [visible, setVisible] = useState({
         createNewJobVisible: false,
-        editJobVisible: false
     });
 
     const [globalFilterValue, setGlobalFilterValue] = useState("");
 
     // Calculate status counts for different job statuses
-    const statusCounts = jobs?.reduce((acc, job) => {
+    const statusCounts = Array.isArray(jobs) ? jobs.reduce((acc, job) => {
         acc[job.status.code] = (acc[job.status.code] || 0) + 1;
         return acc;
-    }, {});
-
+      }, {}) : {};
     // table columns
     const columns = mainColumns()
 
@@ -109,32 +107,12 @@ const Home = () => {
                     toast={toast}
                     selectedRow={selectedRow}
                 />}
-            </Dialog>
-
-            {/* Edit Job Dialog */}
-            <Dialog
-                header="Edit the job"
-                visible={visible.editJobVisible}
-                style={{ width: '50vw', }}
-                onHide={() => {
-                    setVisible({ editJobVisible: false });
-                    setSelectedRow(null);
-                }}
-            >
-                {visible.editJobVisible && selectedRow && <EditJobs
-                    selectedRow={selectedRow}
-                    setVisible={setVisible}
-                    setSelectedRow={setSelectedRow}
-                    setJobs={setJobs}
-                    jobs={jobs}
-                    toast={toast}
-                />}
-            </Dialog>
+            </Dialog>     
 
             {/* Jobs Table */}
             <div className="p-4 rounded-md shadow-md border border-gray-200">
                 <PrimeTable
-                    value={jobs}
+                    value={Array.isArray(jobs) ? jobs : []}
                     columns={columns}
                     scrollHeight="400px"
                     header={header}
@@ -142,8 +120,8 @@ const Home = () => {
                     globalFilterFields={["nameJob", "status.name"]}
                     selection={selectedRow}
                     onSelectionChange={(e) => {
-                        setSelectedRow(e.value);
-                        navigate(`/inventory/${e.value.id}`, { state: { selectedRow: e.value } });
+                        setJobs(e.value);
+                        navigate('/inventory');
                     }}
                     selectionMode={'single'}
                     editMode={false}
