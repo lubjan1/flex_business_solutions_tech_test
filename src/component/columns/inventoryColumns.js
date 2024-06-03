@@ -5,7 +5,7 @@ const inventoryColumns = () => {
           field: 'id',
           header: 'Id',
           style: { width: "200px" },
-          sortable:true,
+          sortable:false,
           body: (rowData) => rowData?.id,
         },
         {

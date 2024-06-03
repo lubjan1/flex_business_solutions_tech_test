@@ -15,14 +15,13 @@ const Home = () => {
         setJobs: state.set
     }));
     const navigate = useNavigate()
-    // Component state variables
-    const [selectedRow, setSelectedRow] = useState(null);
+
     const toast = useRef(null);
 
     const [visible, setVisible] = useState({
         createNewJobVisible: false,
     });
-    console.log({ jobs })
+
     const [globalFilterValue, setGlobalFilterValue] = useState("");
 
     // Calculate status counts for different job statuses
@@ -101,10 +100,9 @@ const Home = () => {
                 {visible.createNewJobVisible && <CreateNewJob
                     jobCategories={jobCategories}
                     jobStatuses={jobStatuses}
-                    addJobs={addJobs}
+                    addJobs={addJobs}   
                     setVisible={setVisible}
                     toast={toast}
-                    selectedRow={selectedRow}
                 />}
             </Dialog>     
 
@@ -117,9 +115,7 @@ const Home = () => {
                     header={header}
                     globalFilter={globalFilterValue}
                     globalFilterFields={["nameJob", "status.name"]}
-                    selection={selectedRow}
                     onSelectionChange={(e) => {
-                        // setSelectedRow(e.value)
                         navigate('/inventory', { state: e.value } );
                     }}
                     selectionMode={'single'}

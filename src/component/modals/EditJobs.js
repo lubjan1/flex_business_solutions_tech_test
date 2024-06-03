@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from "react";
-import PrimeTable from "../primeTable/PrimeTable";
-import { Dropdown } from "primereact/dropdown";
-import editJobColumns from '../columns/editJobColumns';
-import { jobCategories, jobStatuses } from "../../store/generateJob";
-import { useJobsStore } from "../../store/useJobsStore";
 
 const EditJobs = ({
   selectedRowItem,
-  setSelectedRowItem,
-  setVisible,
-  visible,
-  toast,
   updateItems
 }) => {
   const [formData, setFormData] = useState(selectedRowItem);

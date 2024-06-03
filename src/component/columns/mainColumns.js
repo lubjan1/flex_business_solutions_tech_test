@@ -5,10 +5,12 @@ const mainColumns = () => {
         {
             field: "nameJob",
             header: "Jobsite Name",
+            sortable:true,
         },
         {
             field: "status.name",
             header: "Status",
+            sortable:true,
             body: (row) => {
                 return (
                     <span className={`

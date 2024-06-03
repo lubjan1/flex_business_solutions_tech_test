@@ -10,7 +10,6 @@ const editJobColumns = ({
       header: 'Job Name',
       editor: textEditor,
       style:{ width:"200px" }
-
     },
     {
       field: 'status',
